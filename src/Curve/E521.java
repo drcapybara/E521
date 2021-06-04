@@ -208,7 +208,7 @@ public class E521 {
 
     /** Set X coordinate. */
     public void setX(final BigInteger theX) {myX = theX;}
-    /** Set X coordinate. */
+    /** Set Y coordinate. */
     public void setY(final BigInteger theY) {myY = theY;}
 
     /**
