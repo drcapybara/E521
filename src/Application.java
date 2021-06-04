@@ -1,11 +1,16 @@
-import Tests.InitialTests;
+import Tests.RuntimeTests;
+import Tests.TestForCorrectness;
 
+/**
+ * Driver.
+ */
 public class Application {
 
+    /** Main */
     public static void main(final String[] theArgs) {
 
-        InitialTests initTest = new InitialTests();
-
+        TestForCorrectness initTest = new TestForCorrectness();
+        RuntimeTests rTest = new RuntimeTests();
 
     }
 

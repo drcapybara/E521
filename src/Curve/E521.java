@@ -1,38 +1,24 @@
 package Curve;
-
 import java.math.BigInteger;
 
 /**
  * Curve.E521 Elliptic Curve (Edward's Curve) of equation: (x^2) + (y^2) = 1 + d(x^2)(y^2)
  * where d = -376014
- * Contains methods to add (and subtract), multiply, and "divide" points on curve using scalar values.
+ * Contains methods to add and multiply points on curve using scalar values.
  *
  * @version Spring 2021
  * @author Dustin Ray
  */
 public class E521 {
 
-    /**
-     * Mersenne prime defining a finite field F(p)
-     */
+    /** Mersenne prime defining a finite field F(p) */
     public static final BigInteger P = (new BigInteger("2").pow(521)).subtract(BigInteger.ONE);
-
-    /**
-     * d = -376014
-     */
+    /** d = -376014 */
     public static final BigInteger D = new BigInteger("-376014");
-
-
-    /**
-     * X-coordinate of point.
-     */
+    /** X-coordinate of point. */
     private BigInteger myX;
-
-    /**
-     * Y-coordinate of point.
-     */
+    /** Y-coordinate of point. */
     private BigInteger myY;
-
     /** number of points on Curve.E521 Curve -> n := 4 * (R) .*/
     public static final BigInteger R = (new BigInteger("2").pow(519))
             .subtract(new BigInteger(
@@ -44,17 +30,13 @@ public class E521 {
      * from X using sqrt method.
      */
     public E521(final BigInteger theX, boolean theLSB) {
-
         myX = theX;
-
         //solve for y
         BigInteger num = (BigInteger.ONE.subtract(theX.pow(2))).mod(P);
         BigInteger denom = BigInteger.ONE.add(new BigInteger("376014").multiply(theX.pow(2))).mod(P);
         denom = denom.modInverse(P);
-
         BigInteger radicand = num.multiply(denom);
         myY = sqrt(radicand, P, theLSB);
-
     }
 
     /**
@@ -63,20 +45,15 @@ public class E521 {
      * @param theY y coordinate of point
      */
     public E521(final BigInteger theX, final BigInteger theY) {
-
         myX = theX;
         myY = theY;
-
     }
 
-    /**
-     * Constructor for neutral element, defined to be point (0, 1)
-     */
+    /** Constructor for neutral element, defined to be point (0, 1) */
     public E521() {
         myX = BigInteger.ZERO;
         myY = BigInteger.ONE;
     }
-
 
     /**
      * Compares two points for equality by X and Y coordinates.
@@ -112,9 +89,6 @@ public class E521 {
      */
     public E521 add(final E521 theOther) {
 
-//        System.out.println("Add: \n" + theOther.toString());
-        //test for G + (-G), then return neutral point. -G := (x, p - y)
-
         BigInteger x1 = this.getX();
         BigInteger x2 = theOther.getX();
 
@@ -134,8 +108,6 @@ public class E521 {
         BigInteger newY = yNum.multiply(yDenom).mod(P);
 
         return new E521(newX, newY);
-
-
     }
 
     public E521 multiply(final BigInteger theS, final E521 P) {
@@ -145,6 +117,7 @@ public class E521 {
         }
         return result;
     }
+
     /**
      * Double and add multiplication for Curve.E521 point, index decreasing.
      * @param theS Scalar value to multiply by
@@ -156,8 +129,6 @@ public class E521 {
         E521 result = new E521(BigInteger.ZERO, BigInteger.ONE);
         int idx = theS.bitLength();
         while (idx >= 0) {
-
-//            System.out.println(idx);
             result = result.add(result);
             if (theS.testBit(idx--)) {
                 result = result.add(this);
@@ -165,8 +136,6 @@ public class E521 {
         }
         return result;
     }
-
-
 
     /**
      * EC Multiplication algorithm using the Montgomery Ladder approach to mitigate
@@ -184,7 +153,6 @@ public class E521 {
         E521 r1 = P;
         int idx = theS.bitLength();
         while (idx >= 0) {
-
             if (theS.testBit(idx--)) {
                 r0 = r0.add(r1);
                 r1 = r1.add(r1);
@@ -193,7 +161,7 @@ public class E521 {
                 r0 = r0.add(r0);
             }
         }
-        return r0; // r0 = this * s
+        return r0; // r0 = P * s
     }
 
 
@@ -208,13 +176,11 @@ public class E521 {
      * if such a root exists, otherwise null.
      */
     public static BigInteger sqrt(BigInteger v, BigInteger p, boolean lsb) {
-
         assert (p.testBit(0) && p.testBit(1)); // p = 3 (mod 4)
         if (v.signum() == 0) {
             return BigInteger.ZERO;
         }
         BigInteger r = v.modPow(p.shiftRight(2).add(BigInteger.ONE), p);
-//        System.out.println("r = " + r);
         if (r.testBit(0) != lsb) {
             r = p.subtract(r); // correct the lsb }
             return (r.multiply(r).subtract(v).mod(p).signum() == 0) ? r : null;
@@ -240,8 +206,9 @@ public class E521 {
         return myX;
     }
 
+    /** Set X coordinate. */
     public void setX(final BigInteger theX) {myX = theX;}
-
+    /** Set X coordinate. */
     public void setY(final BigInteger theY) {myY = theY;}
 
     /**
@@ -250,6 +217,8 @@ public class E521 {
      */
     public BigInteger getY() { return myY; }
 
+    /** Returns r value for curve.
+     * @return r value for curve. */
     public BigInteger getR() { return R; }
 
 

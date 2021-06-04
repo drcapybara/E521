@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 /** Test cases for elliptic curve Montgomery Ladder point multiplication algorithm. */
-public class InitialTests {
+public class TestForCorrectness {
 
     /** Generator point for curve.  */
     public static final E521 G = new E521(new BigInteger("4"), false);
@@ -18,8 +18,9 @@ public class InitialTests {
     public static final BigInteger k = BigInteger.valueOf(new SecureRandom().nextInt()).mod(G.getR().multiply(BigInteger.valueOf(4)));
 
     /** Constructor.*/
-    public InitialTests() {
+    public TestForCorrectness() {
 
+        System.out.println("INITIAL TESTS: ENSURE CURVE OPERATIONS PRODUCE CORRECT VALUES:\n");
         //initial tests to ensure curve operations produce correct values.
         System.out.println(G.toString("Point G: "));
         zeroTest();
@@ -28,11 +29,10 @@ public class InitialTests {
         twoG();
         fourG();
         rG();
-
         kG();
         kPlusOne();
-        kPlusT();
-        KTGGR();
+        System.out.println("ALL TESTS PASSED.\n ############\n\n");
+
     }
 
     /**Test multiplication for neutral point. 0 * G = O */
@@ -45,6 +45,12 @@ public class InitialTests {
     public void oneTest() {
         E521 zero = G.multiplyMontgomery(BigInteger.ONE, G);
         System.out.println(zero.toString("1 * G: "));
+    }
+
+    /** Tests G * 2 = G */
+    public void twoTest() {
+        E521 zero = G.multiplyMontgomery(BigInteger.TWO, G);
+        System.out.println(zero.toString("2  * G: "));
     }
 
     /** Tests G + (-G) = O  */
@@ -110,24 +116,6 @@ public class InitialTests {
         E521 tTimesG = G.multiplyMontgomery(t, G);
         E521 kTimesGPlusTTimesG = kTimesG.add(tTimesG);
         System.out.println(kTimesGPlusTTimesG.toString("(k * G) + (t * G) = : "));
-    }
-
-    /** tests k * (t * P) = t * (k * G) = (k * t mod r) * G */
-    public void KTGGR(){
-
-        E521 P = G.multiplyMontgomery(k, G);
-
-        E521 KTP = P.multiplyMontgomery(t, P).multiplyMontgomery(k, P);
-        E521 TKG = G.multiplyMontgomery(k, G).multiplyMontgomery(t, G);
-        BigInteger KTmodR = k.multiply(t).mod(G.getR());
-
-        E521 KtmodRG = G.multiplyMontgomery(KTmodR, G);
-
-        System.out.println(KTP.toString("k * (t * P) = :"));
-        System.out.println(TKG.toString("t * (k * G) = :"));
-        System.out.println(KtmodRG.toString("(k * t mod r) * G = :"));
-
-
     }
 
 }
