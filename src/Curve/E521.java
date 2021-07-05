@@ -110,6 +110,11 @@ public class E521 {
         return new E521(newX, newY);
     }
 
+    /**
+     * Naive multiplication. Computes sP as P[1] + P[2] ... P[i] 
+     * @param theS is number of times to add P to itself. 
+     * @param P is the point to multiply. 
+     */
     public E521 multiply(final BigInteger theS, final E521 P) {
         E521 result = new E521(BigInteger.ZERO, BigInteger.ONE);
         for(int i = 0; i < theS.intValue(); i ++) {
